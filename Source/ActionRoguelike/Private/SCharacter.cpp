@@ -6,7 +6,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-// Sets default values
 ASCharacter::ASCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -24,7 +23,6 @@ ASCharacter::ASCharacter()
 	bUseControllerRotationYaw = false;//So our pawn does not rotate when we rotate with the controller.
 }
 
-// Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -33,21 +31,22 @@ void ASCharacter::BeginPlay()
 
 void ASCharacter::MoveForward(float Value)
 {
-	//This is for our character to rotate towards the camera direction while we move forward or backward
-	FRotator ControlRotator = GetControlRotation();
-	ControlRotator.Pitch = 0.0f;
-	ControlRotator.Roll = 0.0f;
+	//This is for our character to rotate and move towards the camera direction while we move forward or backward
+	FRotator controlRotator = GetControlRotation();
+	controlRotator.Pitch = 0.0f;
+	controlRotator.Roll = 0.0f;
 
-	AddMovementInput(ControlRotator.Vector(), Value);
+	AddMovementInput(controlRotator.Vector(), Value);
 }
 
 void ASCharacter::MoveRight(float Value)
 {
-	FRotator ControlRotator = GetControlRotation();
-	ControlRotator.Pitch = 0.0f;
-	ControlRotator.Roll = 0.0f;
+	//This is to avoid that the character rotates in circles, since when we try to move right or left (we need to use the control rotation right vector)
+	FRotator controlRotator = GetControlRotation();
+	controlRotator.Pitch = 0.0f;
+	controlRotator.Roll = 0.0f;
 
-	FVector RightVector = FRotationMatrix(ControlRotator).GetScaledAxis(EAxis::Y);
+	FVector RightVector = FRotationMatrix(controlRotator).GetScaledAxis(EAxis::Y);
 
 	AddMovementInput(RightVector, Value);
 }
@@ -55,22 +54,20 @@ void ASCharacter::MoveRight(float Value)
 void ASCharacter::PrimaryAttack()
 {
 
-	FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01"); 
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandLocation);
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FVector handLocation = GetMesh()->GetSocketLocation("Muzzle_01"); 
+	FTransform spawnTM = FTransform(GetControlRotation(), handLocation);
+	FActorSpawnParameters spawnParams;
+	spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, spawnTM, spawnParams);
 }
 
-// Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

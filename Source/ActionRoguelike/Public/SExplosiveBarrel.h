@@ -20,15 +20,12 @@ protected:
 	class URadialForceComponent* RadialForceComp;
 	
 public:	
-	// Sets default values for this actor's properties
 	ASExplosiveBarrel();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 };
