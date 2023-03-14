@@ -11,21 +11,31 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-protected:
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ProjectileClass;
-
 public:
 	ASCharacter();
 
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 protected:
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	class UAnimMontage* AttackAnim;
 
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere)
 	class UCameraComponent* CameraComp;
+
+	UPROPERTY(VisibleAnywhere)
+	class USinteractionComponent* InteractionComp;
+
+	FTimerHandle TimerHandle_PrimaryAttack;
 
 	virtual void BeginPlay() override;
 
@@ -35,9 +45,7 @@ protected:
 
 	void PrimaryAttack();
 
-public:	
-	virtual void Tick(float DeltaTime) override;
+	void PrimaryInteract();
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	void PrimaryAttack_TimeElapsed();
 };
