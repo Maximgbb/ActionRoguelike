@@ -4,28 +4,23 @@
 #include "SinteractionComponent.h"
 #include "SGameplayInterface.h"
 
-// Sets default values for this component's properties
 USinteractionComponent::USinteractionComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
-
 
 void USinteractionComponent::PrimaryInteract()
 {
 	FCollisionObjectQueryParams objectQueryParams;
 	objectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 
-	FVector eyeLocation;
-	FRotator eyeRotation;
-
 	AActor* myOwner = GetOwner();
 	if (myOwner == nullptr)
 		return;
+
+	FVector eyeLocation;
+	FRotator eyeRotation;
 
 	myOwner->GetActorEyesViewPoint(eyeLocation, eyeRotation);
 	FVector endLocation = eyeLocation + (eyeRotation.Vector() * InteractionDistance);
@@ -56,14 +51,12 @@ void USinteractionComponent::PrimaryInteract()
 				break;
 			}
 		}
-
-		
 	}
+
 	if (bEnableDebug)
 		DrawDebugLine(GetWorld(), eyeLocation, endLocation, linearColor, false, 2.0f, 0, 2.0f);
 }
 
-// Called when the game starts
 void USinteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -71,8 +64,6 @@ void USinteractionComponent::BeginPlay()
 	
 }
 
-
-// Called every frame
 void USinteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

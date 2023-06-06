@@ -16,7 +16,7 @@ public:
 
 protected:
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class USphereComponent* SphereComp;
 
 	UPROPERTY(VisibleAnywhere)

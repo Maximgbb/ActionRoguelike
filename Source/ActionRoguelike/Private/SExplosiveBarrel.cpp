@@ -4,30 +4,39 @@
 #include "SExplosiveBarrel.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "DrawDebugHelpers.h"
 
 ASExplosiveBarrel::ASExplosiveBarrel()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
+	StaticMeshComp->SetSimulatePhysics(true);
 	RootComponent = StaticMeshComp;
 
 	RadialForceComp = CreateDefaultSubobject<URadialForceComponent>("RadialForceComponent");
 	RadialForceComp->SetupAttachment(RootComponent);
+	RadialForceComp->SetAutoActivate(false);
 	RadialForceComp->Radius = 850.0f;
 	RadialForceComp->ImpulseStrength = 1500.0f;
+	RadialForceComp->bImpulseVelChange = true;
 
+	RadialForceComp->AddCollisionChannelToAffect(ECC_WorldDynamic);
 }
 
-void ASExplosiveBarrel::BeginPlay()
+void ASExplosiveBarrel::PostInitializeComponents()
 {
-	Super::BeginPlay();
-	
+	Super::PostInitializeComponents();
+
+	StaticMeshComp->OnComponentHit.AddUniqueDynamic(this, &ASExplosiveBarrel::OnActorHit);
 }
 
-void ASExplosiveBarrel::Tick(float DeltaTime)
+void ASExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Super::Tick(DeltaTime);
+	RadialForceComp->FireImpulse();
 
+	UE_LOG(LogTemp, Log, TEXT("OnActorHit in Explosive Barrel. OtherActor: %s, at game time: %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
+
+	FString CombinedString = FString::Printf(TEXT("Hit at location: %s"), *Hit.ImpactPoint.ToString());
+	DrawDebugString(GetWorld(), Hit.ImpactPoint, CombinedString, nullptr, FColor::Green, 2.0f, true);
 }
-
