@@ -5,6 +5,7 @@
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "DrawDebugHelpers.h"
+#include "SAttributeComponent.h"
 
 ASExplosiveBarrel::ASExplosiveBarrel()
 {
@@ -34,6 +35,13 @@ void ASExplosiveBarrel::PostInitializeComponents()
 void ASExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	RadialForceComp->FireImpulse();
+
+	USAttributeComponent* attributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
+
+	if (attributeComp)
+	{
+		attributeComp->ApplyHealthChange(-50.0f);
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("OnActorHit in Explosive Barrel. OtherActor: %s, at game time: %f"), *GetNameSafe(OtherActor), GetWorld()->TimeSeconds);
 

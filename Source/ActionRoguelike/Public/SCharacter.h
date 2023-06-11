@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class USinteractionComponent* InteractionComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class USAttributeComponent* AttributeComp;
+
 	FTimerHandle TimerHandle_PrimaryAttack;
 
 	virtual void BeginPlay() override;

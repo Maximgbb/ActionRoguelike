@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "SinteractionComponent.h"
+#include "SAttributeComponent.h"
 
 ASCharacter::ASCharacter()
 {
@@ -23,6 +24,8 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true; //This will rotate our character (pawn) towards our movement.
 
 	bUseControllerRotationYaw = false;//So our pawn does not rotate when we rotate with the controller.
+
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>(TEXT("AttributeComp"));
 }
 
 void ASCharacter::Tick(float DeltaTime)
@@ -85,6 +88,12 @@ void ASCharacter::PrimaryAttack_TimeElapsed()
 	if (ensureAlways(ProjectileClass))
 	{
 		FVector handLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+
+		FHitResult hitResult;		
+		//GetWorld()->LineTraceSingleByChannel(hitResult, CameraComp->GetComponentLocation(), );
+
+		//FRotator newRotation = (hitResult.Location - CameraComp->GetComponentLocation()).MakeRotator();
+
 		FTransform spawnTM = FTransform(GetControlRotation(), handLocation);
 		FActorSpawnParameters spawnParams;
 		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
