@@ -26,6 +26,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	class UAnimMontage* AttackAnim;
 
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	float AttackAnimDelay;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> DashProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
+	TSubclassOf<AActor> BlackholeProjectileClass;
+
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArmComp;
 
@@ -40,6 +49,10 @@ protected:
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 
+	FTimerHandle TimerHandle_BlackholeAttack;
+
+	FTimerHandle TimerHandle_Dash;
+
 	virtual void BeginPlay() override;
 
 	void MoveForward(float Value);
@@ -51,4 +64,14 @@ protected:
 	void PrimaryInteract();
 
 	void PrimaryAttack_TimeElapsed();
+
+	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
+
+	void BlackholeAttack();
+
+	void BlackholeAttack_TimeElapsed();
+
+	void Dash();
+
+	void Dash_TimeElapsed();
 };
