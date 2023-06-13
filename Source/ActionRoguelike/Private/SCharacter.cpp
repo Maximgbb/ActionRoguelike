@@ -52,6 +52,13 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
 }
 
+void ASCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	
+	AttributeComp->OnHealthChange.AddDynamic(this, &ASCharacter::OnHealthChanged);
+}
+
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -153,6 +160,16 @@ void ASCharacter::Dash()
 void ASCharacter::Dash_TimeElapsed()
 {
 	SpawnProjectile(DashProjectileClass);
+}
+
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+{
+	if (NewHealth <= 0.0f && Delta < 0.0f)
+	{
+		APlayerController* pc = Cast<APlayerController>(GetController());
+		DisableInput(pc);
+		SetActorEnableCollision(false);
+	}
 }
 
 void ASCharacter::PrimaryInteract()

@@ -18,6 +18,8 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void PostInitializeComponents() override;
+
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
@@ -74,4 +76,7 @@ protected:
 	void Dash();
 
 	void Dash_TimeElapsed();
+
+	UFUNCTION()
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 };
