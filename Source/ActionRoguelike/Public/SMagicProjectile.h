@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UParticleSystemComponent* EffectComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DamageAmount = -10.0f;
+
 	UFUNCTION()
 	void OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
