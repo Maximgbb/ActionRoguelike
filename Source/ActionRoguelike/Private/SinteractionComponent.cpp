@@ -12,40 +12,38 @@ USinteractionComponent::USinteractionComponent()
 
 void USinteractionComponent::PrimaryInteract()
 {
-	FCollisionObjectQueryParams objectQueryParams;
-	objectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_WorldDynamic);
 
-	AActor* myOwner = GetOwner();
-	if (myOwner == nullptr)
+	AActor* MyOwner = GetOwner();
+	if (MyOwner == nullptr)
 		return;
 
-	FVector eyeLocation;
-	FRotator eyeRotation;
+	FVector EyeLocation;
+	FRotator EyeRotation;
 
-	myOwner->GetActorEyesViewPoint(eyeLocation, eyeRotation);
-	FVector endLocation = eyeLocation + (eyeRotation.Vector() * InteractionDistance);
+	MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+	FVector EndLocation = EyeLocation + (EyeRotation.Vector() * InteractionDistance);
 
-	TArray<FHitResult> hitResults;
+	FCollisionShape Shape;
+	Shape.SetSphere(InteractionSphereRadius);
+	
+	TArray<FHitResult> HitResults;
 
-	FCollisionShape shape;
-	shape.SetSphere(InteractionSphereRadius);
+	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(HitResults, EyeLocation, EndLocation, FQuat::Identity, ObjectQueryParams, Shape);
 
-	bool bBlockingHit = GetWorld()->SweepMultiByObjectType(hitResults, eyeLocation, endLocation, FQuat::Identity, objectQueryParams, shape);
-
-	FColor linearColor = bBlockingHit ? FColor::Green : FColor::Red;
-
-	for (FHitResult hit : hitResults)
+	for (const FHitResult& Hit : HitResults)
 	{
-		AActor* hittedActor = hit.GetActor();
-		if (hittedActor != nullptr)
+		AActor* HittedActor = Hit.GetActor();
+		if (HittedActor != nullptr)
 		{
-			if (hittedActor->Implements<USGameplayInterface>())
+			if (HittedActor->Implements<USGameplayInterface>())
 			{
-				APawn* myPawn = Cast<APawn>(myOwner);
-				ISGameplayInterface::Execute_Interact(hittedActor, myPawn);
+				APawn* MyPawn = Cast<APawn>(MyOwner);
+				ISGameplayInterface::Execute_Interact(HittedActor, MyPawn);
 				if (bEnableDebug)
 				{
-					DrawDebugSphere(GetWorld(), hit.ImpactPoint, InteractionSphereRadius, 32, linearColor, false, 2.0f);
+					DrawDebugSphere(GetWorld(), Hit.ImpactPoint, InteractionSphereRadius, 32, (bBlockingHit ? FColor::Green : FColor::Red), false, 2.0f);
 				}
 
 				break;
@@ -54,7 +52,7 @@ void USinteractionComponent::PrimaryInteract()
 	}
 
 	if (bEnableDebug)
-		DrawDebugLine(GetWorld(), eyeLocation, endLocation, linearColor, false, 2.0f, 0, 2.0f);
+		DrawDebugLine(GetWorld(), EyeLocation, EndLocation, (bBlockingHit ? FColor::Green : FColor::Red), false, 2.0f, 0, 2.0f);
 }
 
 void USinteractionComponent::BeginPlay()

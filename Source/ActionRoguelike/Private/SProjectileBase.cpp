@@ -33,7 +33,7 @@ void ASProjectileBase::Explode_Implementation()
 {
 	if (ensure(!IsValid(this)))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
 
 		Destroy();
 	}

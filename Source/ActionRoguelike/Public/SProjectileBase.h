@@ -21,8 +21,10 @@ public:
 
 protected:
 
+	virtual void PostInitializeComponents() override;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
-	UParticleSystem* ImpactVFX;
+	UParticleSystem* ImpactVfx;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* SphereComp;
@@ -38,6 +40,4 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();
-
-	virtual void PostInitializeComponents() override;
 };

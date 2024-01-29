@@ -19,7 +19,7 @@ void ASDashProjectile::Explode_Implementation()
 	//Clear timer if the Explode method was already called through another source, like OnActorHit
 	GetWorldTimerManager().ClearTimer(TimerHandle_DelayedDetonate);
 
-	UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVFX, GetActorLocation(), GetActorRotation());
+	UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
 
 	EffectComp->DeactivateSystem();
 
