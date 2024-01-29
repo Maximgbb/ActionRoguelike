@@ -2,11 +2,14 @@
 
 
 #include "SCharacter.h"
+
+#include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "SinteractionComponent.h"
 #include "SAttributeComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 ASCharacter::ASCharacter()
 {
@@ -30,26 +33,21 @@ ASCharacter::ASCharacter()
 	AttackAnimDelay = 0.2f;
 }
 
-void ASCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &ASCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ASCharacter::MoveRight);
-
-	PlayerInputComponent->BindAxis("Turn", this, &ASCharacter::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("LookUp", this, &ASCharacter::AddControllerPitchInput);
-
-	PlayerInputComponent->BindAction("PrimaryAttack", IE_Pressed, this, &ASCharacter::PrimaryAttack);
-	PlayerInputComponent->BindAction("SecondaryAttack", IE_Pressed, this, &ASCharacter::BlackholeAttack);
-	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &ASCharacter::Dash);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
-	PlayerInputComponent->BindAction("PrimaryInteract", IE_Pressed, this, &ASCharacter::PrimaryInteract);
+	if(UEnhancedInputComponent* EnhancedInputComp = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASCharacter::Move);
+		EnhancedInputComp->BindAction(RotateCameraAction, ETriggerEvent::Triggered, this, &ASCharacter::RotateCamera);
+		EnhancedInputComp->BindAction(PrimaryAttackAction, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAttack);
+		EnhancedInputComp->BindAction(SecondaryAttackAction, ETriggerEvent::Triggered, this, &ASCharacter::BlackHoleAttack);
+		EnhancedInputComp->BindAction(DashAction, ETriggerEvent::Triggered, this, &ASCharacter::Dash);
+		EnhancedInputComp->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ASCharacter::Jump);
+		EnhancedInputComp->BindAction(PrimaryInteractAction, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryInteract);
+	}
+	
 }
 
 void ASCharacter::PostInitializeComponents()
@@ -62,32 +60,59 @@ void ASCharacter::PostInitializeComponents()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	//Here we tell our character class to use the passed input mapping context
+	if(const APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMapping, 0);
+		}
+	}
 }
 
-void ASCharacter::MoveForward(float Value)
+void ASCharacter::MoveForward(const float Value)
 {
 	//This is for our character to rotate and move towards the camera direction while we move forward or backward
-	FRotator controlRotator = GetControlRotation();
-	controlRotator.Pitch = 0.0f;
-	controlRotator.Roll = 0.0f;
+	FRotator ControlRotator = GetControlRotation();
+	ControlRotator.Pitch = 0.0f;
+	ControlRotator.Roll = 0.0f;
 
-	AddMovementInput(controlRotator.Vector(), Value);
+	AddMovementInput(ControlRotator.Vector(), Value);
 }
 
-void ASCharacter::MoveRight(float Value)
+void ASCharacter::MoveRight(const float Value)
 {
 	//This is to avoid that the character rotates in circles, since when we try to move right or left (we need to use the control rotation right vector)
-	FRotator controlRotator = GetControlRotation();
-	controlRotator.Pitch = 0.0f;
-	controlRotator.Roll = 0.0f;
+	FRotator ControlRotator = GetControlRotation();
+	ControlRotator.Pitch = 0.0f;
+	ControlRotator.Roll = 0.0f;
 
-	FVector RightVector = FRotationMatrix(controlRotator).GetScaledAxis(EAxis::Y);
+	const FVector RightVector = FRotationMatrix(ControlRotator).GetScaledAxis(EAxis::Y);
 
 	AddMovementInput(RightVector, Value);
 }
 
-void ASCharacter::PrimaryAttack()
+void ASCharacter::Move(const FInputActionValue& Value)
+{
+	const FVector2D CurrentValue = Value.Get<FVector2D>();
+
+	MoveForward(CurrentValue.Y);
+	MoveRight(CurrentValue.X);
+}
+
+void ASCharacter::RotateCamera(const FInputActionValue& Value)
+{
+	const FVector2D CurrentValue = Value.Get<FVector2D>();
+
+	if(GetController())
+	{
+		AddControllerPitchInput(CurrentValue.Y);
+		AddControllerYawInput(CurrentValue.X);
+	}
+}
+
+void ASCharacter::PrimaryAttack(const FInputActionValue& Value)
 {
 	PlayAnimMontage(AttackAnim);
 
@@ -103,11 +128,11 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	if (ensureAlways(ClassToSpawn))
 	{
-		FVector handLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 
-		FActorSpawnParameters spawnParams;
-		spawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		spawnParams.Instigator = this;
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
 
 		FCollisionShape Shape;
 		Shape.SetSphere(20.0f);
@@ -131,26 +156,26 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 		}
 
 		//Find new direction/rotation from hand pointing to impact point in world
-		FRotator ProjRotation = FRotationMatrix::MakeFromX(TraceEnd - handLocation).Rotator();
+		FRotator ProjRotation = FRotationMatrix::MakeFromX(TraceEnd - HandLocation).Rotator();
 
-		FTransform spawnTM = FTransform(ProjRotation, handLocation);
-		GetWorld()->SpawnActor<AActor>(ClassToSpawn, spawnTM, spawnParams);
+		FTransform SpawnTM = FTransform(ProjRotation, HandLocation);
+		GetWorld()->SpawnActor<AActor>(ClassToSpawn, SpawnTM, SpawnParams);
 	}
 }
 
-void ASCharacter::BlackholeAttack()
+void ASCharacter::BlackHoleAttack(const FInputActionValue& Value)
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_BlackholeAttack, this, &ASCharacter::BlackholeAttack_TimeElapsed, AttackAnimDelay);
+	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::BlackHoleAttack_TimeElapsed, AttackAnimDelay);
 }
 
-void ASCharacter::BlackholeAttack_TimeElapsed()
+void ASCharacter::BlackHoleAttack_TimeElapsed()
 {
-	SpawnProjectile(BlackholeProjectileClass);
+	SpawnProjectile(BlackHoleProjectileClass);
 }
 
-void ASCharacter::Dash()
+void ASCharacter::Dash(const FInputActionValue& Value)
 {
 	PlayAnimMontage(AttackAnim);
 
@@ -162,17 +187,22 @@ void ASCharacter::Dash_TimeElapsed()
 	SpawnProjectile(DashProjectileClass);
 }
 
-void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta)
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, const float NewHealth, const float Delta)
 {
 	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
-		APlayerController* pc = Cast<APlayerController>(GetController());
-		DisableInput(pc);
+		APlayerController* PC = Cast<APlayerController>(GetController());
+		DisableInput(PC);
 		SetActorEnableCollision(false);
 	}
 }
 
-void ASCharacter::PrimaryInteract()
+void ASCharacter::PrimaryInteract(const FInputActionValue& Value)
 {
 	InteractionComp->PrimaryInteract();
+}
+
+void ASCharacter::StartJump(const FInputActionValue& Value)
+{
+	Jump();
 }

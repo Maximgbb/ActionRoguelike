@@ -3,9 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class UInputMappingContext;
+class UInputAction;
+
+/**
+ * 
+ */
 UCLASS()
 class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 {
@@ -14,13 +21,35 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 public:
 	ASCharacter();
 
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void PostInitializeComponents() override;
 
 protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputMappingContext* InputMapping;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* RotateCameraAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* PrimaryAttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* SecondaryAttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* DashAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* PrimaryInteractAction;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
@@ -35,7 +64,7 @@ protected:
 	TSubclassOf<AActor> DashProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> BlackholeProjectileClass;
+	TSubclassOf<AActor> BlackHoleProjectileClass;
 
 	UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArmComp;
@@ -51,7 +80,7 @@ protected:
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 
-	FTimerHandle TimerHandle_BlackholeAttack;
+	FTimerHandle TimerHandle_BlackHoleAttack;
 
 	FTimerHandle TimerHandle_Dash;
 
@@ -61,19 +90,25 @@ protected:
 
 	void MoveRight(float Value);
 
-	void PrimaryAttack();
+	void Move(const FInputActionValue& Value);
+	
+	void RotateCamera(const FInputActionValue& Value);
 
-	void PrimaryInteract();
+	void PrimaryAttack(const FInputActionValue& Value);
+
+	void PrimaryInteract(const FInputActionValue& Value);
+
+	void StartJump(const FInputActionValue& Value);
 
 	void PrimaryAttack_TimeElapsed();
 
 	void SpawnProjectile(TSubclassOf<AActor> ClassToSpawn);
 
-	void BlackholeAttack();
+	void BlackHoleAttack(const FInputActionValue& Value);
 
-	void BlackholeAttack_TimeElapsed();
+	void BlackHoleAttack_TimeElapsed();
 
-	void Dash();
+	void Dash(const FInputActionValue& Value);
 
 	void Dash_TimeElapsed();
 
