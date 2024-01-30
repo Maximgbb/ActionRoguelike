@@ -33,7 +33,7 @@ void ASDashProjectile::Explode_Implementation()
 	//Super::Explode();
 }
 
-void ASDashProjectile::TeleportInstigator()
+void ASDashProjectile::TeleportInstigator() const
 {
 	AActor* ActorToTeleport = GetInstigator();
 	if (ensure(ActorToTeleport))

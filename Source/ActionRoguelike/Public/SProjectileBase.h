@@ -10,7 +10,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
 
-UCLASS(Abstract)
+UCLASS(Abstract) //Abstract marks this class as incomplete, keeping this out of certain dropdown windows, like Spawn Actor, in the Unreal editor
 class ACTIONROGUELIKE_API ASProjectileBase : public AActor
 {
 	GENERATED_BODY()
@@ -20,8 +20,6 @@ public:
 	ASProjectileBase();
 
 protected:
-
-	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactVfx;

@@ -9,6 +9,8 @@
 
 ASProjectileBase::ASProjectileBase()
 {
+	PrimaryActorTick.bCanEverTick = false;
+	
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComponent");
 	SphereComp->SetCollisionProfileName("Projectile");
 	SphereComp->OnComponentHit.AddDynamic(this, &ASProjectileBase::OnActorHit);
@@ -26,23 +28,19 @@ ASProjectileBase::ASProjectileBase()
 
 void ASProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	Explode();
+	if(OtherActor != GetInstigator())
+	{
+		Explode();		
+	}
 }
 
 void ASProjectileBase::Explode_Implementation()
 {
-	if (ensure(!IsValid(this)))
+	if (ensure(!IsPendingKillPending()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
 
 		Destroy();
 	}
-}
-
-void ASProjectileBase::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-
 }
 

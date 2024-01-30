@@ -13,6 +13,10 @@ UCLASS()
 class ACTIONROGUELIKE_API ASDashProjectile : public ASProjectileBase
 {
 	GENERATED_BODY()
+
+public:
+
+	ASDashProjectile();
 	
 protected:
 
@@ -27,11 +31,7 @@ protected:
 
 	virtual void Explode_Implementation() override;
 
-	void TeleportInstigator();
+	void TeleportInstigator() const;
 
 	virtual void BeginPlay() override;
-
-public:
-
-	ASDashProjectile();
 };
