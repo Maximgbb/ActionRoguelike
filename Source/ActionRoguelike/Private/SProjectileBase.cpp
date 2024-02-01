@@ -6,6 +6,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 ASProjectileBase::ASProjectileBase()
 {
@@ -39,6 +40,7 @@ void ASProjectileBase::Explode_Implementation()
 	if (ensure(!IsPendingKillPending()))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
+		UGameplayStatics::SpawnSoundAtLocation(this, ImpactSound, GetActorLocation());
 
 		Destroy();
 	}

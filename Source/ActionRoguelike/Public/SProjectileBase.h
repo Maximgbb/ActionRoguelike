@@ -9,6 +9,7 @@
 class USphereComponent;
 class UProjectileMovementComponent;
 class UParticleSystemComponent;
+class USoundCue;
 
 UCLASS(Abstract) //Abstract marks this class as incomplete, keeping this out of certain dropdown windows, like Spawn Actor, in the Unreal editor
 class ACTIONROGUELIKE_API ASProjectileBase : public AActor
@@ -23,6 +24,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactVfx;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	USoundCue* ImpactSound;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* SphereComp;
