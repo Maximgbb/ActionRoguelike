@@ -113,5 +113,5 @@ protected:
 	void Dash_TimeElapsed();
 
 	UFUNCTION()
-	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, const float MaxHealth, float NewHealth, float Delta);
 };

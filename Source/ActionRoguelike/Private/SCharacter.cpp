@@ -187,14 +187,20 @@ void ASCharacter::Dash_TimeElapsed()
 	SpawnProjectile(DashProjectileClass);
 }
 
-void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, const float NewHealth, const float Delta)
+void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, const float MaxHealth, const float NewHealth, const float Delta)
 {
-	if (NewHealth <= 0.0f && Delta < 0.0f)
+	if(Delta < 0.0f)
 	{
-		APlayerController* PC = Cast<APlayerController>(GetController());
-		DisableInput(PC);
-		SetActorEnableCollision(false);
+		GetMesh()->SetScalarParameterValueOnMaterials("TimeToHit", GetWorld()->GetTimeSeconds());
+
+		if (NewHealth <= 0.0f)
+		{
+			APlayerController* PC = Cast<APlayerController>(GetController());
+			DisableInput(PC);
+			SetActorEnableCollision(false);
+		}
 	}
+	
 }
 
 void ASCharacter::PrimaryInteract(const FInputActionValue& Value)

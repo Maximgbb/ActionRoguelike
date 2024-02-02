@@ -6,17 +6,22 @@
 USAttributeComponent::USAttributeComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	CurrentHealth = MaxHealth;
+}
 
+const float USAttributeComponent::GetMaxHealth() const
+{
+	return MaxHealth;
 }
 
 bool USAttributeComponent::IsAlive() const
 {
-	return Health > 0.0f;
+	return CurrentHealth > 0.0f;
 }
 
 bool USAttributeComponent::ApplyHealthChange(const float Delta)
 {
-	Health += Delta;
-	OnHealthChange.Broadcast(nullptr, this, Health, Delta);
+	CurrentHealth = FMath::Clamp(CurrentHealth + Delta, 0.0f, GetMaxHealth());
+	OnHealthChange.Broadcast(nullptr, this, MaxHealth, CurrentHealth, Delta);
 	return true;
 }
