@@ -31,7 +31,8 @@ void ASProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Oth
 {
 	if(OtherActor != GetInstigator())
 	{
-		Explode();		
+		Explode();
+		UGameplayStatics::PlayWorldCameraShake(this, CameraShake, GetActorLocation(), CameraShakeInnerRadius, CameraShakeOuterRadius);
 	}
 }
 

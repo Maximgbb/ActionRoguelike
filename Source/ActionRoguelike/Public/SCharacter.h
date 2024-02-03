@@ -9,6 +9,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class UParticleSystem;
 
 /**
  * 
@@ -55,6 +56,9 @@ protected:
 	TSubclassOf<AActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
+	UParticleSystem* MuzzleEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	class UAnimMontage* AttackAnim;
 
 	UPROPERTY(EditAnywhere, Category = "Attack")
@@ -93,6 +97,8 @@ protected:
 	void Move(const FInputActionValue& Value);
 	
 	void RotateCamera(const FInputActionValue& Value);
+
+	void CastPrimaryAttack(const FInputActionValue& Value);
 
 	void PrimaryAttack(const FInputActionValue& Value);
 

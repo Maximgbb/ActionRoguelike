@@ -28,6 +28,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	USoundCue* ImpactSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	TSubclassOf<UCameraShakeBase> CameraShake;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	float CameraShakeInnerRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	float CameraShakeOuterRadius;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* SphereComp;
 

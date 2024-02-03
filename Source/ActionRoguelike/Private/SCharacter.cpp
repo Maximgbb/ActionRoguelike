@@ -10,6 +10,7 @@
 #include "SinteractionComponent.h"
 #include "SAttributeComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 ASCharacter::ASCharacter()
 {
@@ -41,6 +42,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		EnhancedInputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASCharacter::Move);
 		EnhancedInputComp->BindAction(RotateCameraAction, ETriggerEvent::Triggered, this, &ASCharacter::RotateCamera);
+		EnhancedInputComp->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &ASCharacter::CastPrimaryAttack);
 		EnhancedInputComp->BindAction(PrimaryAttackAction, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAttack);
 		EnhancedInputComp->BindAction(SecondaryAttackAction, ETriggerEvent::Triggered, this, &ASCharacter::BlackHoleAttack);
 		EnhancedInputComp->BindAction(DashAction, ETriggerEvent::Triggered, this, &ASCharacter::Dash);
@@ -110,6 +112,11 @@ void ASCharacter::RotateCamera(const FInputActionValue& Value)
 		AddControllerPitchInput(CurrentValue.Y);
 		AddControllerYawInput(CurrentValue.X);
 	}
+}
+
+void ASCharacter::CastPrimaryAttack(const FInputActionValue& Value)
+{
+	UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, GetMesh(), "Muzzle_01");
 }
 
 void ASCharacter::PrimaryAttack(const FInputActionValue& Value)
