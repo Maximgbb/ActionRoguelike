@@ -14,6 +14,11 @@ const float USAttributeComponent::GetMaxHealth() const
 	return MaxHealth;
 }
 
+const float USAttributeComponent::GetCurrentHealth() const
+{
+	return CurrentHealth;
+}
+
 bool USAttributeComponent::IsAlive() const
 {
 	return CurrentHealth > 0.0f;

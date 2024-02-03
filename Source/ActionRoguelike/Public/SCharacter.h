@@ -10,6 +10,7 @@
 class UInputMappingContext;
 class UInputAction;
 class UParticleSystem;
+class UCameraComponent;
 
 /**
  * 
@@ -25,6 +26,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void PostInitializeComponents() override;
+
+	const UCameraComponent* GetCameraComponent() const;
 
 protected:
 	
@@ -74,7 +77,7 @@ protected:
 	class USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* CameraComp;
+	UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere)
 	class USinteractionComponent* InteractionComp;

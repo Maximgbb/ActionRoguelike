@@ -26,16 +26,7 @@ protected:
 	class UStaticMeshComponent* LidMesh;
 	
 public:	
-	// Sets default values for this actor's properties
 	ASItemChest();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	void Interact_Implementation(class APawn* InstigatorPawn) override;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
 };

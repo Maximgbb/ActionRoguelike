@@ -59,6 +59,11 @@ void ASCharacter::PostInitializeComponents()
 	AttributeComp->OnHealthChange.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
 
+const UCameraComponent*  ASCharacter::GetCameraComponent() const
+{
+	return CameraComp;
+}
+
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();

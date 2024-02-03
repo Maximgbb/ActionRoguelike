@@ -29,6 +29,9 @@ public:
 	const float GetMaxHealth() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	const float GetCurrentHealth() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool IsAlive() const;
 
 	UPROPERTY(BlueprintAssignable)
