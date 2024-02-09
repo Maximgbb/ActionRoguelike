@@ -2,7 +2,6 @@
 
 
 #include "SCharacter.h"
-
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"

@@ -23,12 +23,12 @@ void ASAICharacter::PostInitializeComponents()
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
 {
-	AAIController* aiController = Cast<AAIController>(GetController());
-	if (aiController)
+	AAIController* AIController = Cast<AAIController>(GetController());
+	if (AIController)
 	{
-		UBlackboardComponent* bbComp = aiController->GetBlackboardComponent();
+		UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
 
-		bbComp->SetValueAsObject("TargetActor", Pawn);
-		DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
+		BBComp->SetValueAsObject("TargetActor", Pawn);
+		//DrawDebugString(GetWorld(), GetActorLocation(), "PLAYER SPOTTED", nullptr, FColor::White, 4.0f, true);
 	}
 }

@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AI/SBTService_CheckAttackRange.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
@@ -11,28 +10,28 @@ void USBTService_CheckAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	
 	//Check distance between AI pawn and target actor
 
-	UBlackboardComponent* blackboardComp = OwnerComp.GetBlackboardComponent();
-	if (ensure(blackboardComp))
+	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+	if (ensure(BlackboardComp))
 	{
-		AActor* targetActor = Cast<AActor>(blackboardComp->GetValueAsObject("TargetActor"));
-		if(targetActor)
+		const AActor* TargetActor = Cast<AActor>(BlackboardComp->GetValueAsObject("TargetActor"));
+		if(TargetActor)
 		{
-			AAIController* myController = OwnerComp.GetAIOwner();
-			if (ensure(myController))
+			const AAIController* MyController = OwnerComp.GetAIOwner();
+			if (ensure(MyController))
 			{
-				APawn* ownerPawn = myController->GetPawn();
-				if (ensure(ownerPawn))
+				const APawn* OwnerPawn = MyController->GetPawn();
+				if (ensure(OwnerPawn))
 				{
-					float distanceToTarget = FVector::Distance(targetActor->GetActorLocation(), ownerPawn->GetActorLocation());
-					bool bWithinRange = distanceToTarget < 2000.0f;
+					const float DistanceToTarget = FVector::Distance(TargetActor->GetActorLocation(), OwnerPawn->GetActorLocation());
+					const bool bWithinRange = DistanceToTarget < 2000.0f;
 
-					bool bHasLOS = false;
+					bool bHasLoS = false;
 					if (bWithinRange)
 					{
-						bHasLOS = myController->LineOfSightTo(targetActor);
+						bHasLoS = MyController->LineOfSightTo(TargetActor);
 					}
 
-					blackboardComp->SetValueAsBool(AttackRangeKey.SelectedKeyName, bWithinRange && bHasLOS);
+					BlackboardComp->SetValueAsBool(AttackRangeKey.SelectedKeyName, bWithinRange && bHasLoS);
 				}
 			}
 		}

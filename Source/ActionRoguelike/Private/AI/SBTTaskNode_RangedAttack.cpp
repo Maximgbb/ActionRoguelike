@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "AI/SBTTaskNode_RangedAttack.h"
 #include "GameFramework/Character.h"
 #include "AIController.h"
@@ -8,32 +7,32 @@
 
 EBTNodeResult::Type USBTTaskNode_RangedAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	AAIController* ownerController = OwnerComp.GetAIOwner();
-	if (ensure(ownerController))
+	const AAIController* OwnerController = OwnerComp.GetAIOwner();
+	if (ensure(OwnerController))
 	{
-		ACharacter* ownerCharacter = Cast<ACharacter>(ownerController->GetPawn());
-		if (!ownerCharacter)
+		const ACharacter* OwnerCharacter = Cast<ACharacter>(OwnerController->GetPawn());
+		if (!OwnerCharacter)
 		{
 			return EBTNodeResult::Failed;
 		}
 
-		FVector muzzleLocation = ownerCharacter->GetMesh()->GetSocketLocation("Muzzle_01");
+		const FVector MuzzleLocation = OwnerCharacter->GetMesh()->GetSocketLocation("Muzzle_01");
 
-		AActor* targetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
-		if (!targetActor)
+		const AActor* TargetActor = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+		if (!TargetActor)
 		{
 			return EBTNodeResult::Failed;
 		}
 
-		FVector direction = targetActor->GetActorLocation() - muzzleLocation;
-		FRotator muzzleRotation = direction.Rotation();
+		const FVector Direction = TargetActor->GetActorLocation() - MuzzleLocation;
+		const FRotator MuzzleRotation = Direction.Rotation();
 
-		FActorSpawnParameters params;
-		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		FActorSpawnParameters Params;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AActor* newProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, muzzleLocation, muzzleRotation, params);
+		const AActor* NewProjectile = GetWorld()->SpawnActor<AActor>(ProjectileClass, MuzzleLocation, MuzzleRotation, Params);
 
-		return newProjectile ? EBTNodeResult::Succeeded : EBTNodeResult::Failed;
+		return NewProjectile ? EBTNodeResult::Succeeded : EBTNodeResult::Failed;
 	}
 
 	return EBTNodeResult::Failed;

@@ -17,7 +17,7 @@ public:
 	// Sets default values for this character's properties
 	ASAICharacter();
 
-	void PostInitializeComponents() override;
+	virtual void PostInitializeComponents() override;
 
 protected:
 
