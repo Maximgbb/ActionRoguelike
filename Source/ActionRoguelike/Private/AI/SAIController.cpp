@@ -13,11 +13,4 @@ void ASAIController::BeginPlay()
 	{
 		RunBehaviorTree(BehaviourTree);
 	}
-
-	//This is being done with a pawn sensing component inside the AI character
-// 	APawn* playerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
-// 	if (playerPawn)
-// 	{
-// 		GetBlackboardComponent()->SetValueAsObject("TargetActor", playerPawn);
-// 	}
 }

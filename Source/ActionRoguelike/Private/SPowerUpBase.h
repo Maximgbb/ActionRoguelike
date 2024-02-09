@@ -24,13 +24,19 @@ protected:
 	UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float InteractionDistanceSquared;
+	float RespawnTime;
+
+	FTimerHandle TimerHandle_RespawnTimer;
+
+	UFUNCTION()
+	void ShowPowerup();
+
+	void HideAndCooldownPowerup();
+
+	void SetPowerupState(bool bNewIsActive);
 	
 public:	
 	ASPowerUpBase();
 	
 	virtual void Interact_Implementation(class APawn* InstigatorPawn) override;
-
-protected:
-	virtual void BeginPlay() override;
 };

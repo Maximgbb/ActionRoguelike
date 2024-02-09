@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	bool IsAlive() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	bool IsFullHealth() const;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChange OnHealthChange;
 

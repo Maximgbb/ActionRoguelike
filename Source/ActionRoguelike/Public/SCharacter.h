@@ -58,6 +58,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	TSubclassOf<AActor> ProjectileClass;
 
+	UPROPERTY(VisibleAnywhere, Category = "Attack")
+	FName HandSocketName;
+
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UParticleSystem* MuzzleEffect;
 
@@ -101,8 +104,6 @@ protected:
 	
 	void RotateCamera(const FInputActionValue& Value);
 
-	void CastPrimaryAttack(const FInputActionValue& Value);
-
 	void PrimaryAttack(const FInputActionValue& Value);
 
 	void PrimaryInteract(const FInputActionValue& Value);
@@ -120,6 +121,8 @@ protected:
 	void Dash(const FInputActionValue& Value);
 
 	void Dash_TimeElapsed();
+
+	void StartAttackEffects();
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, const float MaxHealth, float NewHealth, float Delta);

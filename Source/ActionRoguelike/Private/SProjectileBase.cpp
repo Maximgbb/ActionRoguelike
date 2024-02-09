@@ -32,7 +32,6 @@ void ASProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Oth
 	if(OtherActor != GetInstigator())
 	{
 		Explode();
-		UGameplayStatics::PlayWorldCameraShake(this, CameraShake, GetActorLocation(), CameraShakeInnerRadius, CameraShakeOuterRadius);
 	}
 }
 
@@ -42,6 +41,7 @@ void ASProjectileBase::Explode_Implementation()
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, ImpactVfx, GetActorLocation(), GetActorRotation());
 		UGameplayStatics::SpawnSoundAtLocation(this, ImpactSound, GetActorLocation());
+		UGameplayStatics::PlayWorldCameraShake(this, CameraShake, GetActorLocation(), CameraShakeInnerRadius, CameraShakeOuterRadius);
 
 		Destroy();
 	}

@@ -14,17 +14,31 @@ ASPowerUpBase::ASPowerUpBase()
 	SetRootComponent(SphereComp);
 
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+	MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	MeshComp->SetupAttachment(RootComponent);
+}
+
+void ASPowerUpBase::ShowPowerup()
+{
+	SetPowerupState(true);
+}
+
+void ASPowerUpBase::HideAndCooldownPowerup()
+{
+	SetPowerupState(false);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_RespawnTimer, this, &ASPowerUpBase::ShowPowerup, RespawnTime);
+}
+
+void ASPowerUpBase::SetPowerupState(bool bNewIsActive)
+{
+	SetActorEnableCollision(bNewIsActive);
+
+	RootComponent->SetVisibility(bNewIsActive, true);
 }
 
 void ASPowerUpBase::Interact_Implementation(APawn* InstigatorPawn)
 {
-
-}
-
-void ASPowerUpBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
+	//Implement in child classes
 }
 

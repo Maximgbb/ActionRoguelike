@@ -21,12 +21,5 @@ public:
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float Cooldown;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float HealingAmount;
-
-	void StartCooldown() const;
-
-	FTimerHandle HealingTimerHandle;
 };

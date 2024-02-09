@@ -3,9 +3,7 @@
 
 #include "SMagicProjectile.h"
 #include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "SAttributeComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 ASMagicProjectile::ASMagicProjectile()
 {	
@@ -22,7 +20,7 @@ void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			AttributeComp->ApplyHealthChange(DamageAmount);
 
-			Destroy();
+			Explode();
 		}
 	}
 }

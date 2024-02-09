@@ -31,6 +31,7 @@ ASCharacter::ASCharacter()
 	AttributeComp = CreateDefaultSubobject<USAttributeComponent>(TEXT("AttributeComp"));
 
 	AttackAnimDelay = 0.2f;
+	HandSocketName = "Muzzle_01";
 }
 
 void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -41,7 +42,6 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		EnhancedInputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASCharacter::Move);
 		EnhancedInputComp->BindAction(RotateCameraAction, ETriggerEvent::Triggered, this, &ASCharacter::RotateCamera);
-		EnhancedInputComp->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &ASCharacter::CastPrimaryAttack);
 		EnhancedInputComp->BindAction(PrimaryAttackAction, ETriggerEvent::Triggered, this, &ASCharacter::PrimaryAttack);
 		EnhancedInputComp->BindAction(SecondaryAttackAction, ETriggerEvent::Triggered, this, &ASCharacter::BlackHoleAttack);
 		EnhancedInputComp->BindAction(DashAction, ETriggerEvent::Triggered, this, &ASCharacter::Dash);
@@ -118,16 +118,18 @@ void ASCharacter::RotateCamera(const FInputActionValue& Value)
 	}
 }
 
-void ASCharacter::CastPrimaryAttack(const FInputActionValue& Value)
+void ASCharacter::PrimaryAttack(const FInputActionValue& Value)
 {
-	UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, GetMesh(), "Muzzle_01");
+	StartAttackEffects();
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackAnimDelay);
 }
 
-void ASCharacter::PrimaryAttack(const FInputActionValue& Value)
+void ASCharacter::StartAttackEffects()
 {
 	PlayAnimMontage(AttackAnim);
 
-	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackAnimDelay);
+	UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, GetMesh(), HandSocketName);
 }
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
@@ -139,7 +141,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 {
 	if (ensureAlways(ClassToSpawn))
 	{
-		FVector HandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		FVector HandLocation = GetMesh()->GetSocketLocation(HandSocketName);
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -176,7 +178,7 @@ void ASCharacter::SpawnProjectile(TSubclassOf<AActor> ClassToSpawn)
 
 void ASCharacter::BlackHoleAttack(const FInputActionValue& Value)
 {
-	PlayAnimMontage(AttackAnim);
+	StartAttackEffects();
 
 	GetWorldTimerManager().SetTimer(TimerHandle_BlackHoleAttack, this, &ASCharacter::BlackHoleAttack_TimeElapsed, AttackAnimDelay);
 }
@@ -188,7 +190,7 @@ void ASCharacter::BlackHoleAttack_TimeElapsed()
 
 void ASCharacter::Dash(const FInputActionValue& Value)
 {
-	PlayAnimMontage(AttackAnim);
+	StartAttackEffects();
 
 	GetWorldTimerManager().SetTimer(TimerHandle_Dash, this, &ASCharacter::Dash_TimeElapsed, AttackAnimDelay);
 }

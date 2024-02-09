@@ -10,18 +10,10 @@ void ASHealthPotion::Interact_Implementation(APawn* InstigatorPawn)
 	Super::Interact_Implementation(InstigatorPawn);
 
 	USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(InstigatorPawn->GetComponentByClass(USAttributeComponent::StaticClass()));
-	if (AttributeComp && AttributeComp->GetCurrentHealth() < AttributeComp->GetMaxHealth())
+	if (ensure(AttributeComp) && AttributeComp->IsFullHealth())
 	{
 		AttributeComp->ApplyHealthChange(HealingAmount);
 
-		SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		MeshComp->SetVisibility(false);
-		GetWorldTimerManager().SetTimer(HealingTimerHandle, this, &ASHealthPotion::StartCooldown, Cooldown,false);
+		HideAndCooldownPowerup();
 	}
-}
-
-void ASHealthPotion::StartCooldown() const
-{
-	MeshComp->SetVisibility(true);
-	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
